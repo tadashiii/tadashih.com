@@ -1,0 +1,30 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { categorySlug, getPosts } from '../../lib/blog';
+
+const posts = await getPosts();
+const categories = [...new Set(posts.map((post) => post.data.category))];
+---
+
+<Layout title="Categories — Tadashi" description="Browse Tadashi's notes by subject.">
+  <header class="page-hero">
+    <div class="shell">
+      <span class="eyebrow">The index</span>
+      <h1>Follow your curiosity.</h1>
+      <p>Browse the collection by subject, or wander through everything in the order it was written.</p>
+    </div>
+  </header>
+
+  <section class="article-list-section">
+    <div class="shell">
+      <nav class="category-filter" aria-label="Filter by category">
+        <a class="active" href="/categories/">All notes</a>
+        {categories.map((category) => <a href={`/categories/${categorySlug(category)}/`}>{category}</a>)}
+      </nav>
+      <div class="posts-grid">
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+    </div>
+  </section>
+</Layout>

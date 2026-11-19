@@ -1,0 +1,45 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Layout from '../../layouts/Layout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { categorySlug, getPosts, type Post } from '../../lib/blog';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  const categories = [...new Set(posts.map((post) => post.data.category))];
+  return categories.map((category) => ({
+    params: { category: categorySlug(category) },
+    props: { category, posts: posts.filter((post) => post.data.category === category), categories },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  category: string;
+  posts: Post[];
+  categories: string[];
+}
+
+const { category, posts, categories } = Astro.props;
+---
+
+<Layout title={`${category} — Tadashi`} description={`Notes about ${category.toLowerCase()} by Tadashi.`}>
+  <header class="page-hero">
+    <div class="shell">
+      <span class="eyebrow">Filed under</span>
+      <h1>{category}</h1>
+      <p>{posts.length} {posts.length === 1 ? 'note' : 'notes'} on this subject, with more added whenever curiosity leads back here.</p>
+    </div>
+  </header>
+
+  <section class="article-list-section">
+    <div class="shell">
+      <nav class="category-filter" aria-label="Filter by category">
+        <a href="/categories/">All notes</a>
+        {categories.map((item) => <a class={item === category ? 'active' : ''} href={`/categories/${categorySlug(item)}/`}>{item}</a>)}
+      </nav>
+      <div class="posts-grid">
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+    </div>
+  </section>
+</Layout>

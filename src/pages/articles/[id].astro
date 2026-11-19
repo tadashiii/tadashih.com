@@ -1,0 +1,88 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PostArtwork from '../../components/PostArtwork.astro';
+import PostCard from '../../components/PostCard.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import { categorySlug, formatDate, getPosts, type Post } from '../../lib/blog';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { id: post.id }, props: { post, allPosts: posts } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  post: Post;
+  allPosts: Post[];
+}
+
+const { post, allPosts } = Astro.props;
+const { Content } = await render(post);
+const related = allPosts
+  .filter((item) => item.id !== post.id)
+  .sort((a, b) => Number(b.data.category === post.data.category) - Number(a.data.category === post.data.category))
+  .slice(0, 2);
+---
+
+<Layout title={`${post.data.title} — Tadashi`} description={post.data.description} article>
+  <article>
+    <header class="article-header shell">
+      <div class="post-meta">
+        <a href={`/categories/${categorySlug(post.data.category)}/`}>{post.data.category}</a>
+        <span aria-hidden="true">·</span>
+        <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{post.data.readTime}</span>
+      </div>
+      <h1>{post.data.title}</h1>
+      <p class="dek">{post.data.description}</p>
+    </header>
+
+    <div class="article-hero-art">
+      <PostArtwork tone={post.data.tone} />
+    </div>
+
+    <div class="article-shell">
+      <aside class="article-share" aria-label="Share this article">
+        <span>Share</span>
+        <button type="button" data-copy-link aria-label="Copy article link">⌁</button>
+      </aside>
+      <div class="prose">
+        <Content />
+      </div>
+      <aside class="article-aside">
+        <strong>A note from Tadashi</strong>
+        Part of an ongoing collection about living with more curiosity and attention.
+      </aside>
+      <footer class="article-end">
+        <p>Thanks for reading. If this sparked a thought of your own, carry it with you.</p>
+      </footer>
+    </div>
+  </article>
+
+  <section class="related">
+    <div class="shell">
+      <div class="section-rule">
+        <h2>Keep reading</h2>
+        <a href="/categories/">View all notes</a>
+      </div>
+      <div class="related-grid">
+        {related.map((item) => <PostCard post={item} />)}
+      </div>
+    </div>
+  </section>
+
+  <div class="shell newsletter-wrap">
+    <Newsletter />
+  </div>
+</Layout>
+
+<script>
+  document.querySelector<HTMLButtonElement>('[data-copy-link]')?.addEventListener('click', async (event) => {
+    const button = event.currentTarget as HTMLButtonElement;
+    await navigator.clipboard.writeText(window.location.href);
+    button.textContent = '✓';
+    button.setAttribute('aria-label', 'Link copied');
+  });
+</script>

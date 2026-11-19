@@ -1,5 +1,73 @@
 ---
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from '../layouts/Layout.astro';
+import PostCard from '../components/PostCard.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { categorySlug, getPosts } from '../lib/blog';
+
+const posts = await getPosts();
+const featured = posts.find((post) => post.data.featured) ?? posts[0];
+const recent = posts.filter((post) => post.id !== featured.id).slice(0, 6);
+const categoryCounts = posts.reduce<Record<string, number>>((counts, post) => {
+  counts[post.data.category] = (counts[post.data.category] ?? 0) + 1;
+  return counts;
+}, {});
 ---
+
+<Layout>
+  <section class="home-intro">
+    <div class="shell intro-grid">
+      <div>
+        <span class="eyebrow">A personal journal by Tadashi</span>
+        <h1>Notes on making, living, and <em>paying attention.</em></h1>
+      </div>
+      <div class="intro-note">
+        <p>A quiet corner for hobbies, ideas, and the small observations that are too good to lose.</p>
+        <span>Written in no particular order</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-section">
+    <div class="shell">
+      <div class="section-rule">
+        <h2>Featured note</h2>
+        <span class="sr-only">A selected article</span>
+      </div>
+      <PostCard post={featured} featured />
+    </div>
+  </section>
+
+  <section class="recent-section">
+    <div class="shell">
+      <div class="section-rule">
+        <h2>Recent writing</h2>
+        <a href="/categories/">Browse all categories</a>
+      </div>
+      <div class="posts-grid">
+        {recent.map((post) => <PostCard post={post} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="topics-band">
+    <div class="shell topics-grid">
+      <div>
+        <span class="eyebrow">Follow a thread</span>
+        <h2>Things I return to.</h2>
+      </div>
+      <div class="topic-list">
+        {Object.entries(categoryCounts).map(([category, count]) => (
+          <a class="topic-link" href={`/categories/${categorySlug(category)}/`}>
+            <strong>{category}</strong>
+            <span>{count} {count === 1 ? 'note' : 'notes'}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <div class="shell newsletter-wrap">
+    <Newsletter />
+  </div>
+</Layout>
 

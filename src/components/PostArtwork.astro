@@ -1,0 +1,15 @@
+---
+interface Props {
+  tone: 'hills' | 'workbench' | 'window' | 'ink' | 'garden' | 'walk';
+  compact?: boolean;
+}
+
+const { tone, compact = false } = Astro.props;
+---
+
+<div class:list={['post-artwork', `art-${tone}`, { compact }]} aria-hidden="true">
+  <span class="shape shape-one"></span>
+  <span class="shape shape-two"></span>
+  <span class="shape shape-three"></span>
+  <span class="art-grain"></span>
+</div>

@@ -1,0 +1,30 @@
+<section class="newsletter" aria-labelledby="newsletter-title">
+  <div class="newsletter-copy">
+    <span class="eyebrow">Occasional letters</span>
+    <h2 id="newsletter-title">A thoughtful note, now and then.</h2>
+    <p>No content treadmill. Just new essays, small discoveries, and useful links when there’s something worth sharing.</p>
+  </div>
+  <form class="newsletter-form" data-newsletter-form>
+    <label for="newsletter-email">Email address</label>
+    <div class="input-row">
+      <input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+      <button type="submit">Subscribe</button>
+    </div>
+    <p class="form-note" data-form-note aria-live="polite">No spam. Unsubscribe whenever you like.</p>
+  </form>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-newsletter-form]').forEach((form) => {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const input = form.querySelector<HTMLInputElement>('input[type="email"]');
+      const note = form.querySelector<HTMLElement>('[data-form-note]');
+      if (!input || !note || !input.checkValidity()) return;
+      localStorage.setItem('tadashi-newsletter-email', input.value);
+      note.textContent = 'You’re on the list — thanks for reading.';
+      note.classList.add('success');
+      input.value = '';
+    });
+  });
+</script>

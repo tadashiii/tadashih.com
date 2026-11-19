@@ -1,0 +1,72 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PostArtwork from '../components/PostArtwork.astro';
+import { categorySlug, formatDate, getPosts } from '../lib/blog';
+
+const posts = await getPosts();
+---
+
+<Layout title="Search — Tadashi" description="Search Tadashi's notes and observations.">
+  <header class="page-hero">
+    <div class="shell">
+      <span class="eyebrow">Search the notebook</span>
+      <h1>Find a thought.</h1>
+      <p>Search article titles, descriptions, and categories.</p>
+    </div>
+  </header>
+
+  <section class="search-panel">
+    <div class="narrow-shell">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+        <label class="sr-only" for="site-search">Search articles</label>
+        <input id="site-search" type="search" placeholder="Try “craft”, “outdoors”, or “attention”…" autocomplete="off" data-search-input />
+      </div>
+      <p class="results-count" data-results-count>Showing all {posts.length} notes</p>
+
+      <div class="search-results" data-search-results>
+        {posts.map((post) => (
+          <article class="search-result" data-result data-search={`${post.data.title} ${post.data.description} ${post.data.category}`.toLowerCase()}>
+            <a href={`/articles/${post.id}/`} tabindex="-1" aria-hidden="true"><PostArtwork tone={post.data.tone} compact /></a>
+            <div>
+              <div class="post-meta">
+                <a href={`/categories/${categorySlug(post.data.category)}/`}>{post.data.category}</a>
+                <span aria-hidden="true">·</span>
+                <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+              </div>
+              <h2><a href={`/articles/${post.id}/`}>{post.data.title}</a></h2>
+              <p>{post.data.description}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+      <p class="empty-results" data-empty-results>No notes match that search yet. Try a broader word or browse the categories.</p>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const input = document.querySelector<HTMLInputElement>('[data-search-input]');
+  const results = [...document.querySelectorAll<HTMLElement>('[data-result]')];
+  const count = document.querySelector<HTMLElement>('[data-results-count]');
+  const empty = document.querySelector<HTMLElement>('[data-empty-results]');
+
+  const updateResults = () => {
+    const query = input?.value.trim().toLowerCase() ?? '';
+    let visible = 0;
+    results.forEach((result) => {
+      const matches = !query || result.dataset.search?.includes(query);
+      result.hidden = !matches;
+      if (matches) visible += 1;
+    });
+    if (count) count.textContent = query ? `${visible} ${visible === 1 ? 'note' : 'notes'} found` : `Showing all ${results.length} notes`;
+    if (empty) empty.style.display = visible === 0 ? 'block' : 'none';
+  };
+
+  input?.addEventListener('input', updateResults);
+  const query = new URLSearchParams(window.location.search).get('q');
+  if (query && input) {
+    input.value = query;
+    updateResults();
+  }
+</script>

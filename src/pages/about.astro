@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Newsletter from '../components/Newsletter.astro';
+---
+
+<Layout title="About — Tadashi" description="About Tadashi and this collection of notes and observations.">
+  <header class="page-hero">
+    <div class="shell">
+      <span class="eyebrow">About this place</span>
+      <h1>Curiosity, kept in public.</h1>
+      <p>This is where Tadashi gathers thoughts on hobbies, projects, and the ordinary details that make a life interesting.</p>
+    </div>
+  </header>
+
+  <div class="shell about-layout">
+    <div class="portrait-mark" aria-label="A decorative monogram for Tadashi"></div>
+    <div class="about-copy">
+      <h2>Hello, I’m Tadashi.</h2>
+      <p>I made this site as a home for the things I’m thinking about: lessons from making, notes from time spent outside, ideas borrowed from books, and whatever else earns a place in the notebook.</p>
+      <p>There isn’t a single subject here on purpose. Interests overlap. A lesson from a small project might change how I approach a larger one; a walk might solve a problem that sitting at a desk could not.</p>
+      <p>Think of this less as a publication and more as a well-kept desk: useful objects, open notebooks, and room for the next question.</p>
+
+      <div class="about-facts">
+        <div>
+          <h3>What you’ll find</h3>
+          <p>Essays, project notes, field observations, and practical ideas worth returning to.</p>
+        </div>
+        <div>
+          <h3>Why write</h3>
+          <p>To notice more carefully, remember more clearly, and share something useful along the way.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shell newsletter-wrap">
+    <Newsletter />
+  </div>
+</Layout>

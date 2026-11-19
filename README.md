@@ -1,46 +1,53 @@
-# Astro Starter Kit: Basics
+# Tadashi — Notes & Observations
+
+A local-first personal blog built with Astro. The design uses a warm paper-and-walnut palette with moss green accents, content collections for articles, static category routes, client-side search, and a responsive editorial layout.
+
+## Development
+
+Install dependencies once:
 
 ```sh
-npm create astro@latest -- --template basics
+npm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Start Astro in background mode:
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```sh
+npm run astro -- dev --background
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+Manage the background server with:
 
-## 🧞 Commands
+```sh
+npm run astro -- dev status
+npm run astro -- dev logs
+npm run astro -- dev stop
+```
 
-All commands are run from the root of the project, from a terminal:
+Build the static site with:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+```sh
+npm run build
+```
 
-## 👀 Want to learn more?
+## Writing a post
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Articles are Markdown files in `src/data/blog/`. Copy an existing post and update its frontmatter:
+
+```yaml
+---
+title: "Post title"
+description: "A short summary for cards and search."
+pubDate: 2026-11-18
+category: "Field Notes"
+readTime: "4 min read"
+featured: false
+tone: "hills"
+---
+```
+
+The available artwork tones are `hills`, `workbench`, `window`, `ink`, `garden`, and `walk`. Article and category routes are generated automatically during the build.
+
+## Newsletter behavior
+
+This is a local-only build, so the newsletter form provides a complete confirmation interaction and stores the submitted address in browser local storage. Connect the form to an email provider before deploying it publicly.
